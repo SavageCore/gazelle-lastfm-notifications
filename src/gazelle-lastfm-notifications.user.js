@@ -53,6 +53,12 @@ document.addEventListener('DOMContentLoaded', (function () {
 						titleElement.value = 'Top ' + options.limit + ' Last.FM Artists (' + options.period + ')';
 						artistString = artistString.replace(/(,$)/, '');
 						artistElement.innerText = artistString;
+					} else {
+						GM_notification({
+							text: response.statusText,
+							title: 'Error: Response Status (' + response.status + ')',
+							timeout: 6000
+						});
 					}
 				}
 			});
