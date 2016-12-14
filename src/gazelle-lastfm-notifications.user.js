@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', (function () {
 								artistString += data.topartists.artist[key].name + ',';
 							}
 						}
-						var titleElement = document.getElementsByName('label1')[0];
-						var artistElement = document.getElementsByName('artists1')[0];
+						var titleElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
+						var artistElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
 
 						titleElement.value = 'Top ' + options.limit + ' Last.FM Artists (' + options.period + ')';
 						artistString = artistString.replace(/(,$)/, '');
