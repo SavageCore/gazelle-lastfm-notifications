@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gazelle notificatons from last.fm top artists
 // @namespace    http://savagecore.eu/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Generate notifications on Gazelle sites based upon Last.FM top artists.
 // @author       SavageCore
 
