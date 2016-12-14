@@ -18,7 +18,7 @@
 // @connect					    ws.audioscrobbler.com
 // ==/UserScript==
 
-/*	global document GM_xmlhttpRequest GM_getValue GM_setValue Notification window GM_notification */
+/*	global document GM_xmlhttpRequest GM_getValue GM_setValue GM_notification shimGMNotification */
 /*	eslint new-cap: "off"	*/
 
 document.addEventListener('DOMContentLoaded', (function () {
