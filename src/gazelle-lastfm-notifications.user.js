@@ -5,20 +5,24 @@
 // @description  Generate notifications on Gazelle sites based upon Last.FM top artists.
 // @author       SavageCore
 
-// @include    http*://passtheheadphones.me/user.php?action=notify*
-// @include    http*://apollo.rip/user.php?action=notify*
+// @include						http*://passtheheadphones.me/user.php?action=notify*
+// @include						http*://apollo.rip/user.php?action=notify*
 
 // @downloadURL	 https://github.com/SavageCore/gazelle-lastfm-notifications/raw/master/src/gazelle-lastfm-notifications.user.js
 // @grant								GM_getValue
 // @grant								GM_setValue
 // @grant								GM_xmlhttpRequest
+// @grant								GM_notification
+//
+// @require					    https://gist.github.com/SavageCore/53cfc8fb0a6c8b4d3ad0be26bf21973c/raw/1434f8f22190c952ff1b47040353d383de552492/shimGMNotification.js
 // ==/UserScript==
 
-/*	global document GM_xmlhttpRequest GM_getValue GM_setValue */
+/*	global document GM_xmlhttpRequest GM_getValue GM_setValue Notification window GM_notification */
 /*	eslint new-cap: "off"	*/
 
 document.addEventListener('DOMContentLoaded', (function () {
 	'use strict';
+	shimGMNotification();
 	createOptionsForm();
 	loadSettings();
 
@@ -29,27 +33,37 @@ document.addEventListener('DOMContentLoaded', (function () {
 	}, false);
 
 	function getTopArtists(options) {
-		var artistString = '';
-		GM_xmlhttpRequest({
-			method: 'GET',
-			url: 'https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user=' + options.userName + '&api_key=' + options.apiKey + '&period=' + options.period + '&limit=' + options.limit + '&format=json',
-			onload: function (response) {
-				if (response.status === 200) {
-					var data = JSON.parse(response.responseText);
-					for (var key in data.topartists.artist) {
-						if ({}.hasOwnProperty.call(key, '0')) {
-							artistString += data.topartists.artist[key].name + ',';
+		if (options.userName && options.apiKey && options.period && options.limit) {
+			var artistString = '';
+			GM_xmlhttpRequest({
+				method: 'GET',
+				url: 'https://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user=' + options.userName + '&api_key=' + options.apiKey + '&period=' + options.period + '&limit=' + options.limit + '&format=json',
+				onload: function (response) {
+					if (response.status === 200) {
+						var data = JSON.parse(response.responseText);
+						for (var key in data.topartists.artist) {
+							if ({}.hasOwnProperty.call(key, '0')) {
+								artistString += data.topartists.artist[key].name + ',';
+							}
 						}
-					}
-					var titleElement = document.getElementsByName('label1')[0];
-					var artistElement = document.getElementsByName('artists1')[0];
+						var titleElement = document.getElementsByName('label1')[0];
+						var artistElement = document.getElementsByName('artists1')[0];
 
-					titleElement.value = 'Top ' + options.limit + ' Last.FM Artists (' + options.period + ')';
-					artistString = artistString.replace(/(,$)/, '');
-					artistElement.innerText = artistString;
+						titleElement.value = 'Top ' + options.limit + ' Last.FM Artists (' + options.period + ')';
+						artistString = artistString.replace(/(,$)/, '');
+						artistElement.innerText = artistString;
+					}
 				}
-			}
-		});
+			});
+		} else {
+			var notificationDetails = {
+				text: 'Please fill out all fields',
+				title: 'Error:',
+				timeout: 6000
+			};
+			GM_notification(notificationDetails);
+			return;
+		}
 	}
 
 	function createOptionsForm() {
