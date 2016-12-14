@@ -15,6 +15,7 @@
 // @grant								GM_notification
 //
 // @require					    https://gist.github.com/SavageCore/53cfc8fb0a6c8b4d3ad0be26bf21973c/raw/1434f8f22190c952ff1b47040353d383de552492/shimGMNotification.js
+// @connect					    ws.audioscrobbler.com
 // ==/UserScript==
 
 /*	global document GM_xmlhttpRequest GM_getValue GM_setValue Notification window GM_notification */
