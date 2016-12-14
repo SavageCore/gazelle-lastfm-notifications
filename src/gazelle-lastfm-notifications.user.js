@@ -63,12 +63,11 @@ document.addEventListener('DOMContentLoaded', (function () {
 				}
 			});
 		} else {
-			var notificationDetails = {
+			GM_notification({
 				text: 'Please fill out all fields',
 				title: 'Error:',
 				timeout: 6000
-			};
-			GM_notification(notificationDetails);
+			});
 			return;
 		}
 	}
