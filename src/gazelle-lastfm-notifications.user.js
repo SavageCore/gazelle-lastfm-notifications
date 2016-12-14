@@ -117,6 +117,11 @@ document.addEventListener('DOMContentLoaded', (function () {
 		GM_setValue('period', period);
 		GM_setValue('limit', limit);
 		GM_setValue('viewToggle', viewToggle);
+		GM_notification({
+			text: 'Settings saved!',
+			title: 'Success:',
+			timeout: 6000
+		});
 	}
 
 	function selectItemByValue(elem, value) {
