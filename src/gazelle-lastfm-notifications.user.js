@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', (function () {
 	var fetchButton = document.getElementById('sc_gln_fetch');
 	fetchButton.addEventListener('click', function () {
 		var options = getSettings();
-		switch (GM_getValue('mode', 'artists')) {
+		switch (document.getElementById('sc_gln_mode').value) {
 			case 'artists':
 				getTopArtists(options);
 				break;
