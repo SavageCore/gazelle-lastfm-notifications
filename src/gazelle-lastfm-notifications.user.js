@@ -5,7 +5,7 @@
 // @description  Generate notifications on Gazelle sites based upon Last.FM top artists.
 // @author       SavageCore
 
-// @include						http*://passtheheadphones.me/user.php?action=notify*
+// @include						http*://redacted.ch/user.php?action=notify*
 // @include						http*://apollo.rip/user.php?action=notify*
 
 // @downloadURL	 https://github.com/SavageCore/gazelle-lastfm-notifications/raw/master/src/gazelle-lastfm-notifications.user.js
