@@ -24,24 +24,28 @@
 /*	global document GM shimGMNotification */
 /*	eslint new-cap: "off"	*/
 
-document.addEventListener('DOMContentLoaded', (async function () {
-	'use strict';
+document.addEventListener('DOMContentLoaded', main, false);
+
+async function main() {
 	shimGMNotification();
 	createOptionsForm();
 	await loadSettings();
 
-	const fetchButton = document.getElementById('sc_gln_fetch');
+	const fetchButton = document.querySelector('#sc_gln_fetch');
 	fetchButton.addEventListener('click', () => {
 		const options = getSettings();
-		switch (document.getElementById('sc_gln_mode').value) {
-			case 'artists':
+		switch (document.querySelector('#sc_gln_mode').value) {
+			case 'artists': {
 				getTopArtists(options);
 				break;
-			case 'loved':
+			}
+
+			case 'loved': {
 				getLovedArtists(options);
 				break;
-			default:
+			}
 
+			default:
 		}
 	}, false);
 
@@ -55,10 +59,11 @@ document.addEventListener('DOMContentLoaded', (async function () {
 					if (response.status === 200) {
 						const data = JSON.parse(response.responseText);
 						for (const key in data.topartists.artist) {
-							if ({}.hasOwnProperty.call(key, '0')) {
+							if (Object.prototype.hasOwnProperty.call(key, '0')) {
 								artistString += data.topartists.artist[key].name + '\n';
 							}
 						}
+
 						const titleElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
 						const artistElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
 
@@ -68,16 +73,16 @@ document.addEventListener('DOMContentLoaded', (async function () {
 						GM.notification({
 							text: response.statusText,
 							title: 'Error: Response Status (' + response.status + ')',
-							timeout: 6000
+							timeout: 6000,
 						});
 					}
-				}
+				},
 			});
 		} else {
 			GM.notification({
 				text: 'Please fill out all fields',
 				title: 'Error:',
-				timeout: 6000
+				timeout: 6000,
 			});
 		}
 	}
@@ -92,12 +97,11 @@ document.addEventListener('DOMContentLoaded', (async function () {
 					if (response.status === 200) {
 						const data = JSON.parse(response.responseText);
 						for (const key in data.lovedtracks.track) {
-							if ({}.hasOwnProperty.call(key, '0')) {
-								if (artistArray.indexOf(data.lovedtracks.track[key].artist.name) === -1) {
-									artistArray.push(data.lovedtracks.track[key].artist.name);
-								}
+							if (Object.prototype.hasOwnProperty.call(key, '0') && !artistArray.includes(data.lovedtracks.track[key].artist.name)) {
+								artistArray.push(data.lovedtracks.track[key].artist.name);
 							}
 						}
+
 						const titleElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
 						const artistElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
 
@@ -105,71 +109,72 @@ document.addEventListener('DOMContentLoaded', (async function () {
 						if (artistArray.length < options.limit) {
 							limit = artistArray.length;
 						}
+
 						titleElement.value = 'Top ' + limit + ' Last.FM artists based on loved tracks';
-						artistElement.innerText = artistArray.join(',');
+						artistElement.textContent = artistArray.join(',');
 					} else {
 						GM.notification({
 							text: response.statusText,
 							title: 'Error: Response Status (' + response.status + ')',
-							timeout: 6000
+							timeout: 6000,
 						});
 					}
-				}
+				},
 			});
 		} else {
 			const notificationDetails = {
 				text: 'Please fill out all fields',
 				title: 'Error:',
-				timeout: 6000
+				timeout: 6000,
 			};
 			GM.notification(notificationDetails);
 		}
 	}
 
 	async function createOptionsForm() {
-		const element = document.getElementById('filter_form');
+		const element = document.querySelector('#filter_form');
 		const viewToggle = await GM.getValue('viewToggle', false);
 		element.insertAdjacentHTML('beforebegin', '<div class="head"><strong>Last.FM Settings</strong><span style="float: right;"><a href="#" id="sc_gln_showhide" onclick="$(\'#sc_gln_settings\').gtoggle(); this.innerHTML = (this.innerHTML == \'Show\' ? \'Hide\' : \'Show\'); return false;" class="brackets">Hide</a></span></div><table cellpadding="6" cellspacing="1" border="0" width="100%" class="layout border user_options" id="sc_gln_settings"><tbody><tr id="sc_gln_mode_tr"><td class="label tooltip" title="Mode"><strong>Mode</strong></td><td><select name="sc_gln_mode" id="sc_gln_mode"><option value="artists">Artists</option><option value="loved">Loved Tracks</option></select></td></tr><tr id="sc_gln_username_tr"><td class="label tooltip" title="Last.FM username"><strong>Last.FM username</strong></td><td><input type="text" size="40" name="sc_gln_username" id="sc_gln_username" value></td></tr><tr id="sc_gln_apikey_tr"><td class="label tooltip" title="Last.FM API Key"><strong>Last.FM API Key (Get one <a href=\'http://www.last.fm/api/account/create\' target=\'_blank\'>here</a>)</strong></td><td><input type="text" size="40" name="sc_gln_apikey" id="sc_gln_apikey" value></td></tr><tr id="sc_gln_period_tr"><td class="label tooltip" title="Top artists over timespan"><strong>Period</strong></td><td><select name="sc_gln_period" id="sc_gln_period"><option value="overall">Overall</option><option value="7day">7 Days</option><option value="1month">1 Month</option><option value="3month">3 Months</option><option value="6month">6 Months</option><option value="12month">12 Months</option></select></td></tr><tr id="sc_gln_limit_tr"><td class="label tooltip" title="Limit number of Artists"><strong>Number of Artists</strong></td><td><input type="text" size="40" name="sc_gln_limit" id="sc_gln_limit" value></td></tr><tr id="sc_gln_viewtoggle_tr"><td class="label tooltip" title="Hide this options form on page load"><strong>Hide on load</strong></td><td><input type="checkbox" name="sc_gln_viewtoggle" id="sc_gln_viewtoggle"></td></tr><tr><td colspan="2" class="center"><input type="submit" id="sc_gln_submit" value="Save Settings">&nbsp;<input type="submit" id="sc_gln_fetch" value="Fetch"></td></tr></tbody></table><div class="head colhead_dark"></div>');
-		const submitButton = document.getElementById('sc_gln_submit');
+		const submitButton = document.querySelector('#sc_gln_submit');
 		submitButton.addEventListener('click', saveSettings, false);
-		const settingsElement = document.getElementById('sc_gln_settings');
+		const settingsElement = document.querySelector('#sc_gln_settings');
 		if (viewToggle === true) {
-			document.getElementById('sc_gln_showhide').innerText = 'Show';
+			document.querySelector('#sc_gln_showhide').textContent = 'Show';
 			settingsElement.className += ' hidden';
 		}
 	}
 
 	function getSettings() {
-		const userName = document.getElementById('sc_gln_username').value;
-		const apiKey = document.getElementById('sc_gln_apikey').value;
-		const period = document.getElementById('sc_gln_period').value;
-		const limit = document.getElementById('sc_gln_limit').value;
+		const userName = document.querySelector('#sc_gln_username').value;
+		const apiKey = document.querySelector('#sc_gln_apikey').value;
+		const period = document.querySelector('#sc_gln_period').value;
+		const limit = document.querySelector('#sc_gln_limit').value;
 		return {
 			userName,
 			apiKey,
 			period,
-			limit
+			limit,
 		};
 	}
 
 	async function loadSettings() {
-		const modeVal = await GM.getValue('mode', 'artists');
-		const peroidVal = await GM.getValue('period', 'overall');
-		selectItemByValue(document.getElementById('sc_gln_mode'), modeVal);
-		document.getElementById('sc_gln_username').value = await GM.getValue('userName', '');
-		document.getElementById('sc_gln_apikey').value = await GM.getValue('apiKey', '');
-		selectItemByValue(document.getElementById('sc_gln_period'), peroidVal);
-		document.getElementById('sc_gln_viewtoggle').checked = await GM.getValue('viewToggle', false);
-		document.getElementById('sc_gln_limit').value = await GM.getValue('limit', '50');
+		const modeValue = await GM.getValue('mode', 'artists');
+		const peroidValue = await GM.getValue('period', 'overall');
+		selectItemByValue(document.querySelector('#sc_gln_mode'), modeValue);
+		document.querySelector('#sc_gln_username').value = await GM.getValue('userName', '');
+		document.querySelector('#sc_gln_apikey').value = await GM.getValue('apiKey', '');
+		selectItemByValue(document.querySelector('#sc_gln_period'), peroidValue);
+		document.querySelector('#sc_gln_viewtoggle').checked = await GM.getValue('viewToggle', false);
+		document.querySelector('#sc_gln_limit').value = await GM.getValue('limit', '50');
 	}
 
 	async function saveSettings() {
-		const mode = document.getElementById('sc_gln_mode').value;
-		const userName = document.getElementById('sc_gln_username').value;
-		const apiKey = document.getElementById('sc_gln_apikey').value;
-		const period = document.getElementById('sc_gln_period').value;
-		const limit = document.getElementById('sc_gln_limit').value;
-		const viewToggle = document.getElementById('sc_gln_viewtoggle').checked;
+		const mode = document.querySelector('#sc_gln_mode').value;
+		const userName = document.querySelector('#sc_gln_username').value;
+		const apiKey = document.querySelector('#sc_gln_apikey').value;
+		const period = document.querySelector('#sc_gln_period').value;
+		const limit = document.querySelector('#sc_gln_limit').value;
+		const viewToggle = document.querySelector('#sc_gln_viewtoggle').checked;
 		await GM.setValue('mode', mode);
 		await GM.setValue('userName', userName);
 		await GM.setValue('apiKey', apiKey);
@@ -179,17 +184,18 @@ document.addEventListener('DOMContentLoaded', (async function () {
 		GM.notification({
 			text: 'Settings saved!',
 			title: 'Success:',
-			timeout: 6000
+			timeout: 6000,
 		});
 	}
 
-	function selectItemByValue(elem, value) {
-		for (let i = 0; i < elem.options.length; i++) {
-			if (elem.options[i].value === value) {
-				elem.selectedIndex = i;
+	function selectItemByValue(element, value) {
+		for (let i = 0; i < element.options.length; i++) {
+			if (element.options[i].value === value) {
+				element.selectedIndex = i;
 				return true;
 			}
 		}
+
 		return false;
 	}
-})(), false);
+}
