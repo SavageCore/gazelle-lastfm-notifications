@@ -24,7 +24,7 @@
 /*	global document GM shimGMNotification */
 /*	eslint new-cap: "off"	*/
 
-async function main() {
+(async function () {
 	shimGMNotification();
 	createOptionsForm();
 	await loadSettings();
@@ -196,6 +196,4 @@ async function main() {
 
 		return false;
 	}
-}
-
-await main();
+})();
