@@ -21,7 +21,7 @@
 // @run-at				document-end
 // ==/UserScript==
 
-/*	global document GM shimGMNotification */
+/*	global document GM shimGMNotification window */
 /*	eslint new-cap: "off"	*/
 
 (async function () {
@@ -62,8 +62,12 @@
 							}
 						}
 
-						const titleElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
-						const artistElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
+						let titleElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
+						let artistElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
+						if (window.location.host === 'orpheus.network') {
+							titleElement = document.querySelectorAll('#notification1 > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
+							artistElement = document.querySelectorAll('#notification1 > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
+						}
 
 						titleElement.value = 'Top ' + options.limit + ' Last.FM Artists (' + options.period + ')';
 						artistElement.textContent = artistString;
@@ -100,8 +104,12 @@
 							}
 						}
 
-						const titleElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
-						const artistElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
+						let titleElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
+						let artistElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
+						if (window.location.host === 'orpheus.network') {
+							titleElement = document.querySelectorAll('#notification1 > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
+							artistElement = document.querySelectorAll('#notification1 > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
+						}
 
 						let limit = options.limit;
 						if (artistArray.length < options.limit) {
@@ -130,7 +138,11 @@
 	}
 
 	async function createOptionsForm() {
-		const element = document.querySelector('#filter_form');
+		let element = document.querySelector('#filter_form');
+		if (window.location.host === 'orpheus.network') {
+			element = document.querySelector('#notification1');
+		}
+
 		const viewToggle = await GM.getValue('viewToggle', false);
 		element.insertAdjacentHTML('beforebegin', '<div class="head"><strong>Last.FM Settings</strong><span style="float: right;"><a href="#" id="sc_gln_showhide" onclick="$(\'#sc_gln_settings\').gtoggle(); this.innerHTML = (this.innerHTML == \'Show\' ? \'Hide\' : \'Show\'); return false;" class="brackets">Hide</a></span></div><table cellpadding="6" cellspacing="1" border="0" width="100%" class="layout border user_options" id="sc_gln_settings"><tbody><tr id="sc_gln_mode_tr"><td class="label tooltip" title="Mode"><strong>Mode</strong></td><td><select name="sc_gln_mode" id="sc_gln_mode"><option value="artists">Artists</option><option value="loved">Loved Tracks</option></select></td></tr><tr id="sc_gln_username_tr"><td class="label tooltip" title="Last.FM username"><strong>Last.FM username</strong></td><td><input type="text" size="40" name="sc_gln_username" id="sc_gln_username" value></td></tr><tr id="sc_gln_apikey_tr"><td class="label tooltip" title="Last.FM API Key"><strong>Last.FM API Key (Get one <a href=\'http://www.last.fm/api/account/create\' target=\'_blank\'>here</a>)</strong></td><td><input type="text" size="40" name="sc_gln_apikey" id="sc_gln_apikey" value></td></tr><tr id="sc_gln_period_tr"><td class="label tooltip" title="Top artists over timespan"><strong>Period</strong></td><td><select name="sc_gln_period" id="sc_gln_period"><option value="overall">Overall</option><option value="7day">7 Days</option><option value="1month">1 Month</option><option value="3month">3 Months</option><option value="6month">6 Months</option><option value="12month">12 Months</option></select></td></tr><tr id="sc_gln_limit_tr"><td class="label tooltip" title="Limit number of Artists"><strong>Number of Artists</strong></td><td><input type="text" size="40" name="sc_gln_limit" id="sc_gln_limit" value></td></tr><tr id="sc_gln_viewtoggle_tr"><td class="label tooltip" title="Hide this options form on page load"><strong>Hide on load</strong></td><td><input type="checkbox" name="sc_gln_viewtoggle" id="sc_gln_viewtoggle"></td></tr><tr><td colspan="2" class="center"><input type="submit" id="sc_gln_submit" value="Save Settings">&nbsp;<input type="submit" id="sc_gln_fetch" value="Fetch"></td></tr></tbody></table><div class="head colhead_dark"></div>');
 		const submitButton = document.querySelector('#sc_gln_submit');
