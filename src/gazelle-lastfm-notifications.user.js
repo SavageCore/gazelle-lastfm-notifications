@@ -18,12 +18,11 @@
 // @require      	https://greasemonkey.github.io/gm4-polyfill/gm4-polyfill.js
 // @require				https://gist.github.com/SavageCore/53cfc8fb0a6c8b4d3ad0be26bf21973c/raw/1434f8f22190c952ff1b47040353d383de552492/shimGMNotification.js
 // @connect				ws.audioscrobbler.com
+// @run-at				document-end
 // ==/UserScript==
 
 /*	global document GM shimGMNotification */
 /*	eslint new-cap: "off"	*/
-
-document.addEventListener('DOMContentLoaded', main, false);
 
 async function main() {
 	shimGMNotification();
@@ -198,3 +197,5 @@ async function main() {
 		return false;
 	}
 }
+
+await main();
