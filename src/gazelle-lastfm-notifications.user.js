@@ -56,15 +56,14 @@ document.addEventListener('DOMContentLoaded', (async function () {
 						const data = JSON.parse(response.responseText);
 						for (const key in data.topartists.artist) {
 							if ({}.hasOwnProperty.call(key, '0')) {
-								artistString += data.topartists.artist[key].name + ',';
+								artistString += data.topartists.artist[key].name + '\n';
 							}
 						}
 						const titleElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(1) > td:nth-child(2) > input')[0];
 						const artistElement = document.querySelectorAll('#filter_form > table > tbody > tr:nth-child(3) > td:nth-child(2) > textarea')[0];
 
 						titleElement.value = 'Top ' + options.limit + ' Last.FM Artists (' + options.period + ')';
-						artistString = artistString.replace(/(,$)/, '');
-						artistElement.innerText = artistString;
+						artistElement.textContent = artistString;
 					} else {
 						GM.notification({
 							text: response.statusText,
